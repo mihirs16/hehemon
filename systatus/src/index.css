@@ -6,6 +6,7 @@ body {
   overflow: hidden;
 
   --island-fg-text-color: #e8e0d0;
+  --island-fg-text-color-muted: #a09080;
   --island-fg-divider-color: #6a5a4a;
   --island-fg-icon-color: #6a5a4a;
   --island-bg-color: #2a1508;
@@ -57,7 +58,7 @@ body,
     width: fit-content;
     height: 28px;   
     padding: 0px 10px;
-    gap: 6px;
+    gap: 8px;
     color: var(--island-fg-text-color);  
     border: 1px solid var(--island-bg-border-color);
     background-color: var(--island-bg-color);
@@ -73,9 +74,13 @@ body,
 }
 
 .icon {
-    font-size: 14px;
-    margin-right: 3px;
+    margin-right: 4px;
     color: var(--island-fg-icon-color);
+}
+
+/* muted text */
+.value.muted {
+    color: var(--island-fg-text-color-muted);
 }
 
 /* weather icons are too small */
@@ -83,5 +88,6 @@ body,
 .nf-weather-night_alt_cloudy,
 .nf-weather-day_partly_cloudy,
 .nf-weather-night_alt_partly_cloudy {
-  font-size: 20px;
+  font-size: 16px;
 }
+
