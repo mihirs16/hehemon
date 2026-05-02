@@ -1,3 +1,5 @@
+@import 'https://www.nerdfonts.com/assets/css/webfont.css';
+
 body {
   font-family: ui-monospace, monospace;
   font-size: 12px;
@@ -61,16 +63,25 @@ body,
     background-color: var(--island-bg-color);
 }
 
-.stat {}
+.stat {
+    display: flex;
+    align-items: center;
+}
 
 .stat-divider {
     color: var(--island-fg-divider-color);
 }
 
 .icon {
-    display: inline;
-    font-family: 'JetBrainsMono Nerd Font', monospace;
-    margin: 2px;
+    font-size: 14px;
+    margin-right: 3px;
     color: var(--island-fg-icon-color);
 }
 
+/* weather icons are too small */
+.nf-weather-day_cloudy,
+.nf-weather-night_alt_cloudy,
+.nf-weather-day_partly_cloudy,
+.nf-weather-night_alt_partly_cloudy {
+  font-size: 20px;
+}
