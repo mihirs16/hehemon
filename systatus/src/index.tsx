@@ -1,14 +1,17 @@
-/* @refresh reload */
-import './index.css';
 import { For, render } from 'solid-js/web';
 import { createStore } from 'solid-js/store';
 import * as zebar from 'zebar';
 
+/** @refresh hot-reload */
+import './index.css';
+
+/** zebar providers for system statistics */ 
 const providers = zebar.createProviderGroup({
-  cpu: { type: 'cpu' },
-  memory: { type: 'memory' },
-  weather: { type: 'weather', latitude: 51.5072, longitude: 0.1276 },
-  date: { type: 'date' }
+    glazewm: { type: 'glazewm' },
+    cpu: { type: 'cpu' },
+    memory: { type: 'memory' },
+    weather: { type: 'weather' },
+    date: { type: 'date' }
 });
 
 render(() => <App />, document.getElementById('root')!);
@@ -20,12 +23,16 @@ function App() {
 
     return (
         <div class="app">
-            <div class="archipelago-left"></div>
+            {/* Top-left group of islands */}
+            <div class="archipelago-left">
+                { output.glazewm && getWorkspacesIsland(output.glazewm)}
+            </div>
+
+            {/* Center group of islands */}
             <div class="archipelago-center"></div>
        
             {/* Top-right group of islands */}
             <div class="archipelago-right">
-
                 {/* Island for CPU/Mem stats */}
                 <div class="island">
                     <div class="stat">
@@ -86,9 +93,8 @@ function App() {
                             }
                         </span>
                     </div>
-
                 </div>
-            </div> 
+            </div>
         </div>
     );
 }
@@ -131,3 +137,33 @@ function getFormattedDt(epoch: number) {
         })
     }
 }
+
+function getWorkspacesIsland(glazewm: zebar.GlazeWmOutput) {
+    const possible = ['1', '2', '3', '4', '5'];
+    const workspaces = possible.map(name => ({
+        ...glazewm.currentWorkspaces.find(w => w.name === name),
+        name,
+    }));
+    
+    const gCmd = glazewm.runCommand;
+
+    return (
+        <div class="island island-slim">
+            <div class="toggle-group">
+                <For each={workspaces}>{(ws, i) =>
+                    <button
+                        onClick={() => !!ws.id && gCmd(`focus --workspace ${ws.name}`)}
+                        classList={{
+                            "toggle-solid": true,
+                            "toggle-active": !!ws.id,
+                            "toggle-on": !!ws.isDisplayed
+                        }}
+                    >
+                        <span>{ws.name}</span>
+                    </button>
+                }</For>
+            </div>
+        </div>
+    );
+}
+

@@ -7,9 +7,14 @@ body {
 
   --island-fg-text-color: #e8e0d0;
   --island-fg-text-color-muted: #a09080;
+  --island-fg-text-color-inactive: #4a3f35;
+  --island-fg-text-color-dim: #6a5a4a;
+  --island-fg-text-color-selected: #2a1508;
   --island-fg-divider-color: #6a5a4a;
   --island-fg-icon-color: #6a5a4a;
   --island-bg-color: #2a1508;
+  --island-bg-color-hover: rgba(255,255,255,0.05);
+  --island-bg-color-selected: #e8630a;
   --island-bg-border-color: rgb(180, 80, 20, 0.3);
 }
 
@@ -90,4 +95,43 @@ body,
 .nf-weather-night_alt_partly_cloudy {
   font-size: 16px;
 }
+
+.island-slim {
+    padding: 0px 5px;
+}
+
+.toggle-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+.toggle-solid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 0;
+    height: 20px;
+    width: 24px;
+    border: none;
+    border-radius: 0px;
+    background: none;
+    color: var(--island-fg-text-color-inactive);
+}
+
+.toggle-solid.toggle-on {
+    color: var(--island-fg-text-color-selected);
+    background: var(--island-bg-color-selected);
+}
+
+.toggle-active {
+    background: var(--island-bg-color-hover);
+    color: var(--island-fg-text-color-muted);
+}
+
+.toggle-solid.toggle-active:not(.toggle-on):hover {
+    color: var(--island-fg-text-color-dim);
+}
+
 
