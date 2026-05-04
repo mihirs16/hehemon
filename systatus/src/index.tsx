@@ -8,6 +8,7 @@ import './index.css';
 /** zebar providers for system statistics */ 
 const providers = zebar.createProviderGroup({
     glazewm: { type: 'glazewm' },
+    media: { type: 'media' },
     cpu: { type: 'cpu' },
     memory: { type: 'memory' },
     weather: { type: 'weather' },
@@ -33,7 +34,10 @@ function App() {
             </div>
 
             {/* Center group of islands */}
-            <div class="archipelago-center"></div>
+            <div class="archipelago-center">
+                {/* Island for a light media center */}
+                { output.media && getMediaIsland(output.media) }
+            </div>
        
             {/* Top-right group of islands */}
             <div class="archipelago-right">
@@ -275,3 +279,39 @@ function getFormattedWindows(rawProcessName: string) {
         </>
     );
 }
+
+/** Builds an island for a light media center */
+function getMediaIsland(media: zebar.MediaOutput) {
+    const session = media.currentSession;
+    if (!session) return (<></>);
+
+    return (
+        <div class="island">
+            <div class="stat">
+                <span classList={{
+                    icon: true,
+                    "icon-media-play": session.isPlaying 
+                }}>
+                    <i class="nf nf-cod-music"></i>
+                </span>
+                <div class="media-value-container">
+                    <span class="value media-value">
+                        {session.title} - {session.artist}
+                        &nbsp; &nbsp; &nbsp; &nbsp;
+                        {session.title} - {session.artist}
+                    </span>
+                </div>               
+            </div>
+            <div class="stat">
+                <button class="icon toggle-icon" onClick={() => media.togglePlayPause()}>
+                    { 
+                        session.isPlaying ? 
+                            <i class="nf nf-md-pause"></i>
+                            : <i class="nf nf-md-play"></i>
+                    }
+                </button>
+            </div>
+        </div>
+    );
+}
+
