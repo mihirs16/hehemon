@@ -25,7 +25,11 @@ function App() {
         <div class="app">
             {/* Top-left group of islands */}
             <div class="archipelago-left">
-                { output.glazewm && getWorkspacesIsland(output.glazewm)}
+                {/* Island for GlazeWM workspaces */} 
+                { output.glazewm && getWorkspacesIsland(output.glazewm) }
+                
+                {/* Island for GlazeWM windows */}
+                { output.glazewm && getWindowsIsland(output.glazewm) }
             </div>
 
             {/* Center group of islands */}
@@ -99,6 +103,12 @@ function App() {
     );
 }
 
+/** 
+ * Maintains a lookup for common weather statuses 
+ * and returns the icon associated with it. 
+ *
+ * @returns <i>
+ */
 function getWeatherIcon(status: string) {
     const iconLookup = {
         clear_day: 'nf-weather-day_sunny',
@@ -123,6 +133,7 @@ function getWeatherIcon(status: string) {
     return (<i class={`nf ${weatherIconClass}`}></i>);
 }
 
+/** Normalises date and time for display */
 function getFormattedDt(epoch: number) {
     const dt = new Date(epoch);
     return {
@@ -138,6 +149,7 @@ function getFormattedDt(epoch: number) {
     }
 }
 
+/** Builds the island to show GlazeWM workspaces */
 function getWorkspacesIsland(glazewm: zebar.GlazeWmOutput) {
     const possible = ['1', '2', '3', '4', '5'];
     const workspaces = possible.map(name => ({
@@ -167,3 +179,99 @@ function getWorkspacesIsland(glazewm: zebar.GlazeWmOutput) {
     );
 }
 
+/** Builds the island for windows, as exposed by GlazeWM */
+function getWindowsIsland(glazewm: zebar.GlazeWmOutput) {
+    const allWindows = glazewm.allWindows;
+    const allWorkspaces = glazewm.allWorkspaces;
+
+    const gCmd = glazewm.runCommand;
+
+    return (
+        <div class="island island-slim">
+            <div class="toggle-group">
+                <For each={allWindows}>{(window, i) =>
+                    <button
+                        onClick={() => {
+                            const workspace = findWorkspaceContainingWindow(
+                                glazewm, 
+                                window.id
+                            );
+                            if (workspace) {
+                                gCmd(`focus --workspace ${workspace.name}`);
+                            }
+                            gCmd(`focus --container-id ${window.id}`);
+                            if (window.state.type === 'minimized') {
+                                gCmd(`toggle-minimized`);
+                            }
+                        }}
+                        classList={{
+                            "toggle": true,
+                            "toggle-on": window.hasFocus && window.state.type === 'tiling'
+                        }}
+                    >
+                        {
+                            window.processName ? 
+                                getFormattedWindows(window.processName) : 'unknown'
+                        }
+                    </button>
+                }</For>
+            </div>
+        </div>
+    );
+}
+
+/** 
+ * Recursively traverses all workspaces and their 
+ * containers to find the workspace which has the
+ * given window
+ */
+function findWorkspaceContainingWindow(
+    glazewm: zebar.GlazeWmOutput,
+    windowId: string
+): zebar.Workspace | undefined {
+    function containsWindow(node: zebar.Container): boolean {
+        if (node.id === windowId) {
+            return true;
+        }
+        return node.children?.some(
+            (child: zebar.Container) => containsWindow(child)
+        ) ?? false;
+    }
+
+    return glazewm.allWorkspaces.find(
+        ws => ws.children?.some(
+            child => containsWindow(child)
+        )
+    );
+}
+
+/**
+ * Maintains a lookup of common applications 
+ * against their normalised label and icons.
+ * Fallsback to default icon and lowercased label
+ */
+function getFormattedWindows(rawProcessName: string) {
+    const processLookup = {
+        discord: { name: 'discord', iconClass: 'nf-fa-discord' },
+        windowsterminal: { name: 'term', iconClass: 'nf-fa-terminal' },
+        zen: { name: 'zen', iconClass: 'nf-cod-globe' },
+        steamwebhelper: { name: 'steam', iconClass: 'nf-fa-steam' }
+    };
+
+    const processName = rawProcessName.toLowerCase();
+    const label = processLookup[processName] ?? { 
+        name: processName,
+        iconClass: 'nf-md-application_outline'
+    };
+
+    return (
+        <>
+            <span class='icon'>
+                <i class={`nf ${label.iconClass}`}></i>
+            </span>
+            <span class='value'>
+                {label.name}
+            </span>
+        </>
+    );
+}
