@@ -190,6 +190,10 @@ function getWindowsIsland(glazewm: zebar.GlazeWmOutput) {
 
     const gCmd = glazewm.runCommand;
 
+    if (!allWindows || allWindows.length === 0) {
+        return (<></>);
+    }
+
     return (
         <div class="island island-slim">
             <div class="toggle-group">
