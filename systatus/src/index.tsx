@@ -263,7 +263,9 @@ function getFormattedWindows(rawProcessName: string) {
         discord: { name: 'discord', iconClass: 'nf-fa-discord' },
         windowsterminal: { name: 'term', iconClass: 'nf-fa-terminal' },
         zen: { name: 'zen', iconClass: 'nf-cod-globe' },
-        steamwebhelper: { name: 'steam', iconClass: 'nf-fa-steam' }
+        steamwebhelper: { name: 'steam', iconClass: 'nf-fa-steam' },
+        fusion360: { name: 'fusion360', iconClass: 'nf-md-cube_outline' },
+        claude: { name: 'claude', iconClass: 'nf-fa-brain' }
     };
 
     const processName = rawProcessName.toLowerCase();
